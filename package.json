@@ -1,12 +1,12 @@
 {
-  "name": "ai-refinement-engine",
+  "name": "ai-refinement-matrix",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"node server.js\" \"vite\"",
-    "build": "vite build",
-    "start": "cross-env NODE_ENV=production node server.js"
+    "dev": "concurrently \"tsx server.ts\" \"vite\"",
+    "build": "tsc && vite build",
+    "start": "cross-env NODE_ENV=production tsx server.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.11.0",
@@ -16,9 +16,14 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@types/node": "^20.14.9",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
+    "tsx": "^4.15.7",
+    "typescript": "^5.5.2",
     "vite": "^5.3.1"
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { 
   Sparkles, 
   ArrowRight, 
@@ -14,8 +14,29 @@ import {
   AlertTriangle
 } from 'lucide-react'
 
+// Interfaces
+interface Story {
+  id: string
+  title: string
+  asA: string
+  iWantTo: string
+  soThat: string
+  acceptanceCriteria: string[]
+}
+
+interface Vulnerability {
+  title: string
+  description: string
+  acceptanceCriteria: string[]
+}
+
+interface Template {
+  name: string
+  text: string
+}
+
 // Templates to help POs get started
-const TEMPLATES = [
+const TEMPLATES: Template[] = [
   {
     name: "User Filter Chips",
     text: `As a developer, I want a reusable Filter Chip component in our UI.
@@ -36,28 +57,28 @@ We must support slow 3G connections (sometimes requests take up to 30s).`
 ]
 
 export default function App() {
-  const [step, setStep] = useState(1)
-  const [rawNotes, setRawNotes] = useState('')
+  const [step, setStep] = useState<number>(1)
+  const [rawNotes, setRawNotes] = useState<string>('')
   
   // Excavation states
-  const [isExcavating, setIsExcavating] = useState(false)
-  const [excavatedSpec, setExcavatedSpec] = useState('')
-  const [excavateError, setExcavateError] = useState('')
+  const [isExcavating, setIsExcavating] = useState<boolean>(false)
+  const [excavatedSpec, setExcavatedSpec] = useState<string>('')
+  const [excavateError, setExcavateError] = useState<string>('')
 
   // Slicing states
-  const [isSlicing, setIsSlicing] = useState(false)
-  const [stories, setStories] = useState([])
-  const [sliceError, setSliceError] = useState('')
+  const [isSlicing, setIsSlicing] = useState<boolean>(false)
+  const [stories, setStories] = useState<Story[]>([])
+  const [sliceError, setSliceError] = useState<string>('')
   
   // Adversary Auditing states
-  const [auditingIndex, setAuditingIndex] = useState(null)
-  const [isAuditing, setIsAuditing] = useState(false)
-  const [vulnerabilities, setVulnerabilities] = useState([])
-  const [selectedVulnIndices, setSelectedVulnIndices] = useState([])
-  const [adversaryError, setAdversaryError] = useState('')
+  const [auditingIndex, setAuditingIndex] = useState<number | null>(null)
+  const [isAuditing, setIsAuditing] = useState<boolean>(false)
+  const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([])
+  const [selectedVulnIndices, setSelectedVulnIndices] = useState<number[]>([])
+  const [adversaryError, setAdversaryError] = useState<string>('')
   
   // Clipboard alert
-  const [copied, setCopied] = useState(false)
+  const [copied, setCopied] = useState<boolean>(false)
 
   // API Call handlers
   const handleExcavate = async () => {
@@ -77,7 +98,7 @@ export default function App() {
       } else {
         setExcavateError(data.error || 'Excavation failed')
       }
-    } catch (err) {
+    } catch (err: any) {
       setExcavateError(err.message || 'Connection error')
     } finally {
       setIsExcavating(false)
@@ -97,32 +118,37 @@ export default function App() {
       const data = await response.json()
       if (response.ok) {
         // Normalize acceptanceCriteria from string/array to guaranteed array
-        const normalized = (data.stories || []).map(story => {
+        const normalized = (data.stories || []).map((story: any) => {
           let ac = story.acceptanceCriteria || []
           if (typeof ac === 'string') {
             ac = ac.split(/\n|(?=Given )|(?=When )|(?=Then )/i)
                    .map(line => line.trim())
                    .filter(line => line.length > 0)
           }
-          return { ...story, acceptanceCriteria: ac }
+          return {
+            id: story.id || `story-${Math.random().toString(36).substr(2, 9)}`,
+            title: story.title || 'Untitled Story',
+            asA: story.asA || '',
+            iWantTo: story.iWantTo || '',
+            soThat: story.soThat || '',
+            acceptanceCriteria: ac
+          } as Story
         })
         setStories(normalized)
-        // Keep step 2 so user can view/edit stories
       } else if (response.status === 422 && data.rawResult) {
-        // Fallback for parsing error - try to explain
         setSliceError(`The Slicer Agent returned unparseable text. Click 'Retry' or edit raw specs.`)
         console.warn('Raw unparseable result:', data.rawResult)
       } else {
         setSliceError(data.error || 'Slicing failed')
       }
-    } catch (err) {
+    } catch (err: any) {
       setSliceError(err.message || 'Connection error')
     } finally {
       setIsSlicing(false)
     }
   }
 
-  const startAdversaryAudit = async (index) => {
+  const startAdversaryAudit = async (index: number) => {
     setAuditingIndex(index)
     setIsAuditing(true)
     setSelectedVulnIndices([])
@@ -135,21 +161,24 @@ export default function App() {
       })
       const data = await response.json()
       if (response.ok) {
-        // Normalize vulnerability acceptanceCriteria
-        const normalized = (data.edgeCases || []).map(vuln => {
+        const normalized = (data.edgeCases || []).map((vuln: any) => {
           let ac = vuln.acceptanceCriteria || []
           if (typeof ac === 'string') {
             ac = ac.split(/\n|(?=Given )|(?=When )|(?=Then )/i)
                    .map(line => line.trim())
                    .filter(line => line.length > 0)
           }
-          return { ...vuln, acceptanceCriteria: ac }
+          return {
+            title: vuln.title || 'Untitled Edgecase',
+            description: vuln.description || '',
+            acceptanceCriteria: ac
+          } as Vulnerability
         })
         setVulnerabilities(normalized)
       } else {
         setAdversaryError(data.error || 'Audit failed')
       }
-    } catch (err) {
+    } catch (err: any) {
       setAdversaryError(err.message || 'Connection error')
     } finally {
       setIsAuditing(false)
@@ -161,7 +190,6 @@ export default function App() {
     const updatedStories = [...stories]
     const story = updatedStories[auditingIndex]
     
-    // Add selected vulnerabilities to story acceptance criteria
     const newCriteria = [...(story.acceptanceCriteria || [])]
     selectedVulnIndices.forEach(idx => {
       const vuln = vulnerabilities[idx]
@@ -182,35 +210,51 @@ export default function App() {
     setSelectedVulnIndices([])
   }
 
-  const handleUpdateStoryField = (index, field, value) => {
+  const handleUpdateStoryField = (index: number, field: keyof Story, value: string) => {
     const updated = [...stories]
-    updated[index][field] = value
-    setStories(updated)
-  }
-
-  const handleUpdateStoryAC = (storyIndex, acIndex, value) => {
-    const updated = [...stories]
-    updated[storyIndex].acceptanceCriteria[acIndex] = value
-    setStories(updated)
-  }
-
-  const handleAddAC = (storyIndex) => {
-    const updated = [...stories]
-    if (!updated[storyIndex].acceptanceCriteria) {
-      updated[storyIndex].acceptanceCriteria = []
+    if (field === 'acceptanceCriteria') return // Managed separately
+    updated[index] = {
+      ...updated[index],
+      [field]: value
     }
-    updated[storyIndex].acceptanceCriteria.push('Given... When... Then...')
     setStories(updated)
   }
 
-  const handleDeleteAC = (storyIndex, acIndex) => {
+  const handleUpdateStoryAC = (storyIndex: number, acIndex: number, value: string) => {
     const updated = [...stories]
-    updated[storyIndex].acceptanceCriteria.splice(acIndex, 1)
+    const updatedAc = [...updated[storyIndex].acceptanceCriteria]
+    updatedAc[acIndex] = value
+    updated[storyIndex] = {
+      ...updated[storyIndex],
+      acceptanceCriteria: updatedAc
+    }
+    setStories(updated)
+  }
+
+  const handleAddAC = (storyIndex: number) => {
+    const updated = [...stories]
+    const updatedAc = [...(updated[storyIndex].acceptanceCriteria || [])]
+    updatedAc.push('Given... When... Then...')
+    updated[storyIndex] = {
+      ...updated[storyIndex],
+      acceptanceCriteria: updatedAc
+    }
+    setStories(updated)
+  }
+
+  const handleDeleteAC = (storyIndex: number, acIndex: number) => {
+    const updated = [...stories]
+    const updatedAc = [...updated[storyIndex].acceptanceCriteria]
+    updatedAc.splice(acIndex, 1)
+    updated[storyIndex] = {
+      ...updated[storyIndex],
+      acceptanceCriteria: updatedAc
+    }
     setStories(updated)
   }
 
   const handleAddStory = () => {
-    const newStory = {
+    const newStory: Story = {
       id: `story-custom-${Date.now()}`,
       title: 'New Story Slice',
       asA: 'User',
@@ -221,7 +265,7 @@ export default function App() {
     setStories([...stories, newStory])
   }
 
-  const handleDeleteStory = (index) => {
+  const handleDeleteStory = (index: number) => {
     const updated = [...stories]
     updated.splice(index, 1)
     setStories(updated)

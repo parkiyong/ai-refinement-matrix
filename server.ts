@@ -6,7 +6,6 @@ import { execFile } from 'child_process'
 import { promisify } from 'util'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import fs from 'fs'
 
 const execFileAsync = promisify(execFile)
 const app = new Hono()
@@ -17,19 +16,45 @@ app.use('/api/*', cors())
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+// Interfaces for Requests
+interface ExcavateRequest {
+  notes: string
+}
+
+interface SliceRequest {
+  spec: string
+}
+
+interface Story {
+  id?: string
+  title: string
+  asA: string
+  iWantTo: string
+  soThat: string
+  acceptanceCriteria: string[]
+}
+
+interface AdversaryRequest {
+  story: Story
+}
+
+interface EdgeCase {
+  title: string
+  description: string
+  acceptanceCriteria: string[]
+}
+
 // Helper to run agy CLI command safely using spawn/execFile (no shell injection risk)
-async function runAgyAgent(agentName, prompt) {
+async function runAgyAgent(agentName: string, prompt: string): Promise<string> {
   console.log(`[Backend] Invoking agy with agent: ${agentName}...`)
   
-  // We use execFile to execute agy without launching a shell, passing arguments as an array.
-  // We add --dangerously-skip-permissions to avoid blocking on tool permission requests.
   try {
     const { stdout, stderr } = await execFileAsync('agy', [
       '--agent', agentName,
       '--dangerously-skip-permissions',
       '--print', prompt
     ], {
-      timeout: 120000, // 2-minute timeout for larger prompts
+      timeout: 120000, // 2-minute timeout
       maxBuffer: 10 * 1024 * 1024 // 10MB buffer
     })
     
@@ -38,7 +63,7 @@ async function runAgyAgent(agentName, prompt) {
     }
     
     return stdout
-  } catch (error) {
+  } catch (error: any) {
     console.error(`[Backend] Error running agy:`, error)
     throw new Error(error.stdout || error.message || 'CLI execution failed')
   }
@@ -47,36 +72,34 @@ async function runAgyAgent(agentName, prompt) {
 // API Endpoints
 app.post('/api/excavate', async (c) => {
   try {
-    const { notes } = await c.req.json()
+    const { notes } = await c.req.json<ExcavateRequest>()
     if (!notes || notes.trim() === '') {
       return c.json({ error: 'Raw notes are required' }, 400)
     }
     
     const output = await runAgyAgent('excavator', notes)
     return c.json({ result: output })
-  } catch (err) {
-    return c.json({ error: err.message }, 500)
+  } catch (err: any) {
+    return c.json({ error: err.message || 'An error occurred during excavation' }, 500)
   }
 })
 
 app.post('/api/slice', async (c) => {
   try {
-    const { spec } = await c.req.json()
+    const { spec } = await c.req.json<SliceRequest>()
     if (!spec || spec.trim() === '') {
       return c.json({ error: 'Specification is required' }, 400)
     }
     
     const output = await runAgyAgent('slicer', spec)
     
-    // Try to parse the JSON array from the agent response
-    let stories = []
+    let stories: Story[] = []
     try {
-      // Find the first '[' and last ']' to extract JSON array if agent wrapped it in markdown
       const jsonStart = output.indexOf('[')
       const jsonEnd = output.lastIndexOf(']') + 1
       if (jsonStart !== -1 && jsonEnd !== -1) {
         const jsonStr = output.substring(jsonStart, jsonEnd)
-        stories = JSON.parse(jsonStr)
+        stories = JSON.parse(jsonStr) as Story[]
       } else {
         throw new Error('JSON boundaries not found')
       }
@@ -86,14 +109,14 @@ app.post('/api/slice', async (c) => {
     }
     
     return c.json({ stories })
-  } catch (err) {
-    return c.json({ error: err.message }, 500)
+  } catch (err: any) {
+    return c.json({ error: err.message || 'An error occurred during slicing' }, 500)
   }
 })
 
 app.post('/api/adversary', async (c) => {
   try {
-    const { story } = await c.req.json()
+    const { story } = await c.req.json<AdversaryRequest>()
     if (!story) {
       return c.json({ error: 'Story object is required' }, 400)
     }
@@ -110,13 +133,13 @@ Identify 5 obscure edge cases/vulnerabilities and output them as a JSON array.`
     
     const output = await runAgyAgent('adversary', prompt)
     
-    let edgeCases = []
+    let edgeCases: EdgeCase[] = []
     try {
       const jsonStart = output.indexOf('[')
       const jsonEnd = output.lastIndexOf(']') + 1
       if (jsonStart !== -1 && jsonEnd !== -1) {
         const jsonStr = output.substring(jsonStart, jsonEnd)
-        edgeCases = JSON.parse(jsonStr)
+        edgeCases = JSON.parse(jsonStr) as EdgeCase[]
       } else {
         throw new Error('JSON boundaries not found')
       }
@@ -126,8 +149,8 @@ Identify 5 obscure edge cases/vulnerabilities and output them as a JSON array.`
     }
     
     return c.json({ edgeCases })
-  } catch (err) {
-    return c.json({ error: err.message }, 500)
+  } catch (err: any) {
+    return c.json({ error: err.message || 'An error occurred during adversary audit' }, 500)
   }
 })
 
@@ -135,11 +158,9 @@ Identify 5 obscure edge cases/vulnerabilities and output them as a JSON array.`
 if (process.env.NODE_ENV === 'production') {
   console.log('[Backend] Running in Production mode. Serving static assets...')
   
-  // If the build directory exists, serve it
   app.use('/*', serveStatic({ 
     root: './dist',
     rewriteRequestPath: (path) => {
-      // Return path directly or route SPA to index.html if not a static file
       if (path.includes('.') || path.startsWith('/api/')) {
         return path
       }

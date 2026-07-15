@@ -37,8 +37,9 @@ A modern, high-performance web dashboard that orchestrates a specialized three-a
 
 ## 🛠️ Technology Stack
 
-*   **Frontend**: React (Vite, Lucide Icons, Vanilla CSS Design System)
-*   **Backend API**: Hono running on Node.js (`@hono/node-server`)
+*   **Language**: TypeScript (Type safety enforced across client & server)
+*   **Frontend**: React (TypeScript, Vite, Lucide Icons, Vanilla CSS Design System)
+*   **Backend API**: Hono running on Node.js using `tsx` (TypeScript Execution)
 *   **Orchestration Engine**: Runs the Antigravity TUI/CLI (`agy`) via secure child processes (`execFile`) using local custom agents.
 
 ---
@@ -68,7 +69,7 @@ A complete copy of the custom agents is included in this repository under the `.
 ### 2. Setup the Workspace
 Navigate to this directory and install Node dependencies:
 ```bash
-cd ~/.gemini/antigravity/scratch/ai-refinement-engine
+cd ~/GitHub/ai-refinement-matrix
 npm install
 ```
 
