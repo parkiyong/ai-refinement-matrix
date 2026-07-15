@@ -1,0 +1,9 @@
+{
+  "name": "ai-refinement-plugin",
+  "version": "1.0.0",
+  "description": "AI Refinement Matrix: Excavator, Slicer, and Adversary agent configurations.",
+  "author": {
+    "name": "User"
+  },
+  "license": "MIT"
+}
