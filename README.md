@@ -2,6 +2,8 @@
 
 A modern, high-performance web dashboard that orchestrates a specialized three-agent team to automate backlog refinement and vertical user story slicing using the **SPIDR framework** and cynical safety audits.
 
+![AI Refinement Matrix Interface](./assets/screenshot.png)
+
 ```
   [ Raw Feature / Idea ]
             │
