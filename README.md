@@ -4,18 +4,23 @@ A modern, high-performance web dashboard that orchestrates a specialized three-a
 
 ![AI Refinement Matrix Interface](./assets/screenshot.png)
 
-```mermaid
-graph TD
-    Raw[Raw Feature / Idea] --> Excavator["1. The Excavator <br>(Extracts explicit & implicit specs)"]
-    Excavator --> Slicer["2. The Slicer <br>(SPIDR vertical user story slicing)"]
-    Slicer --> Adversary["3. The Adversary <br>(Stress-tests edge cases & safety limits)"]
-    Adversary --> Backlog[Refined, Secure Backlog]
-
-    style Raw fill:#12121d,stroke:#a855f7,stroke-width:2px,color:#f4f4f5
-    style Excavator fill:#0a0a0f,stroke:#06b6d4,stroke-width:2px,color:#f4f4f5
-    style Slicer fill:#0a0a0f,stroke:#a855f7,stroke-width:2px,color:#f4f4f5
-    style Adversary fill:#0a0a0f,stroke:#ef4444,stroke-width:2px,color:#f4f4f5
-    style Backlog fill:#12121d,stroke:#10b981,stroke-width:2px,color:#10b981
+```
+  [ Raw Feature / Idea ]
+            │
+            ▼
+  ┌───────────────────┐
+  │ 1. The Excavator  │  (Extracts explicit & implicit specs)
+  └─────────┬─────────┘
+            │
+            ▼
+  ┌───────────────────┐
+  │ 2. The Slicer     │  (Cuts horizontal blocks into vertical user stories)
+  └─────────┬─────────┘
+            │
+            ▼
+  ┌───────────────────┐
+  │ 3. The Adversary  │  (Stress-tests edge cases & non-functional limits)
+  └───────────────────┘
 ```
 
 ---
