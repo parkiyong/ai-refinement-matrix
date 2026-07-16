@@ -15,6 +15,8 @@
   --text-main: #f4f4f5;
   --text-muted: #a1a1aa;
   --text-highlight: #06b6d4;
+  --text-danger: #fca5a5;
+  --text-warning: #fcd34d;
   
   --shadow-neon: 0 0 20px rgba(6, 182, 212, 0.15);
   --shadow-neon-violet: 0 0 20px rgba(168, 85, 247, 0.2);
@@ -24,6 +26,24 @@
   --font-body: 'Inter', sans-serif;
   
   --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="light"] {
+  --bg-dark: #f8fafc;
+  --bg-card: rgba(255, 255, 255, 0.75);
+  --bg-input: rgba(241, 245, 249, 0.9);
+  --border-color: rgba(15, 23, 42, 0.08);
+  --border-focus: rgba(6, 182, 212, 0.6);
+  
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-highlight: #0891b2;
+  --text-danger: #dc2626;
+  --text-warning: #d97706;
+  
+  --shadow-neon: 0 0 20px rgba(6, 182, 212, 0.1);
+  --shadow-neon-violet: 0 0 20px rgba(168, 85, 247, 0.15);
+  --shadow-card: 0 8px 32px 0 rgba(148, 163, 184, 0.12);
 }
 
 * {
@@ -45,8 +65,16 @@ body {
   min-height: 100vh;
 }
 
+[data-theme="light"] body {
+  background-image: 
+    radial-gradient(at 10% 10%, rgba(168, 85, 247, 0.04) 0px, transparent 50%),
+    radial-gradient(at 90% 90%, rgba(6, 182, 212, 0.04) 0px, transparent 50%),
+    radial-gradient(at 50% 10%, rgba(99, 102, 241, 0.03) 0px, transparent 40%);
+}
+
 /* Glassmorphism Panel Container */
 .app-container {
+  position: relative;
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
@@ -860,3 +888,122 @@ body {
   }
 }
 
+/* Theme Toggle Button styling */
+.theme-toggle-btn {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-smooth);
+  position: absolute;
+  top: 2rem;
+  right: 1.5rem;
+  z-index: 100;
+}
+
+.theme-toggle-btn:hover {
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-neon);
+  transform: translateY(-2px);
+}
+
+.theme-toggle-btn svg {
+  transition: transform 0.5s ease;
+}
+
+.theme-toggle-btn:hover svg {
+  transform: rotate(30deg);
+}
+
+@media (max-width: 768px) {
+  .theme-toggle-btn {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin: 0 auto 1.5rem auto;
+  }
+}
+
+/* Light Theme Element Overrides */
+[data-theme="light"] .modal-content {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="light"] .modal-overlay {
+  background: rgba(240, 244, 248, 0.85);
+}
+
+[data-theme="light"] .adversary-intro {
+  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.1);
+  color: #c2410c;
+}
+
+[data-theme="light"] .adversary-card-item {
+  background: rgba(0, 0, 0, 0.01);
+}
+
+[data-theme="light"] .adversary-card-item.selected {
+  background: rgba(239, 68, 68, 0.02);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+[data-theme="light"] .adversary-card-title {
+  color: #c2410c;
+}
+
+[data-theme="light"] .story-card {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+[data-theme="light"] .story-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(6, 182, 212, 0.4);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="light"] .story-statement-box {
+  background: rgba(15, 23, 42, 0.03);
+}
+
+[data-theme="light"] .btn-outline:hover {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.15);
+}
+
+[data-theme="light"] .task-checkbox-item {
+  background: rgba(15, 23, 42, 0.01);
+}
+
+[data-theme="light"] .task-checkbox-item:hover {
+  background: rgba(15, 23, 42, 0.03);
+  border-color: rgba(15, 23, 42, 0.12);
+}
+
+[data-theme="light"] .task-checkbox-item.completed {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.03);
+}
+
+[data-theme="light"] .switch-slider {
+  background-color: rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.1);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, 0.2);
+}

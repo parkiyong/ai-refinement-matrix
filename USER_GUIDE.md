@@ -31,6 +31,9 @@ npm run dev
 
 Then, open your browser and navigate to **[http://localhost:5173](http://localhost:5173)**.
 
+### 🌗 Theme Toggle (Light & Dark Modes)
+The dashboard features an adaptive theme toggle button in the top-right corner. It detects your system's mode, allows seamless toggling between a futuristic dark cyber-aesthetic and a clean, high-contrast light mode, and persists your selection in browser local storage.
+
 ---
 
 ## 🗺️ Step-by-Step Refinement Pipeline

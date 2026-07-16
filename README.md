@@ -37,6 +37,7 @@ A modern, high-performance web dashboard that orchestrates a specialized six-age
     *   **The Guardian**: Automates the QA contract, detailing Unit, Integration, and Mock Data expectations for each subtask.
     *   **Interactive Checklist**: Edit task details, files, and contracts inline, add manual tasks, or check them off as completed.
 *   **Release Center**: Exports the final refined backlog (with developer tasks and test contracts) to Markdown or copy to clipboard for Jira/Linear.
+*   **Polished Theme Toggle**: Sleek Light/Dark theme toggle positioned in the upper-right corner of the dashboard, persisting preference in local storage and adapting all glassmorphic components and color gradients dynamically.
 
 ---
 

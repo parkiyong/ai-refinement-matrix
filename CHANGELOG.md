@@ -5,6 +5,15 @@ All notable changes to the AI Refinement Matrix project will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-07-16
+
+### Added
+- **Polished Light & Dark Theme Toggle**:
+  - Added a floating theme toggle button in the top-right corner of the dashboard rendering adaptive Lucide `Sun` and `Moon` icons.
+  - Implemented comprehensive light theme variables and element style overrides in `App.css` to build a sleek slate/blue light theme.
+  - Cleaned up inline static color styles across story cards, input areas, realist audits, and checklists in `App.tsx` to use CSS variables.
+  - Configured automatic state syncing and browser local storage persistence.
+
 ## [1.1.0] - 2026-07-16
 
 ### Added

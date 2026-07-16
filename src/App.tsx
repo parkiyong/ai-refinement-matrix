@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   Sparkles, 
   ArrowRight, 
@@ -11,7 +11,9 @@ import {
   RefreshCw,
   Layers,
   FileText,
-  AlertTriangle
+  AlertTriangle,
+  Sun,
+  Moon
 } from 'lucide-react'
 
 // Interfaces
@@ -112,6 +114,15 @@ const TEMPLATE_DESIGN_DOC = `## System Architecture & Conventions
   - Offline mode requires a local IndexedDB state manager.`
 
 export default function App() {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return (localStorage.getItem('theme') as 'light' | 'dark') || 'dark'
+  })
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
   const [step, setStep] = useState<number>(1)
   const [rawNotes, setRawNotes] = useState<string>('')
   
@@ -624,6 +635,16 @@ export default function App() {
 
   return (
     <div className="app-container">
+      {/* Theme Toggle Button */}
+      <button 
+        className="theme-toggle-btn" 
+        onClick={() => setTheme(prev => prev === 'light' ? 'dark' : 'light')}
+        aria-label="Toggle light/dark theme"
+        title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      >
+        {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+      </button>
+
       {/* App Header */}
       <header className="app-header">
         <h1 className="app-title">AI Refinement Matrix</h1>
@@ -928,7 +949,7 @@ export default function App() {
                             <span className="story-keyword">AS A</span>
                             <input 
                               type="text" 
-                              style={{ background: 'transparent', border: 'none', outline: 'none', color: '#f4f4f5', width: '100%' }}
+                              style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-main)', width: '100%' }}
                               value={story.asA} 
                               onChange={(e) => handleUpdateStoryField(idx, 'asA', e.target.value)}
                             />
@@ -937,7 +958,7 @@ export default function App() {
                             <span className="story-keyword">I WANT TO</span>
                             <input 
                               type="text" 
-                              style={{ background: 'transparent', border: 'none', outline: 'none', color: '#f4f4f5', width: '100%' }}
+                              style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-main)', width: '100%' }}
                               value={story.iWantTo} 
                               onChange={(e) => handleUpdateStoryField(idx, 'iWantTo', e.target.value)}
                             />
@@ -946,7 +967,7 @@ export default function App() {
                             <span className="story-keyword">SO THAT</span>
                             <input 
                               type="text" 
-                              style={{ background: 'transparent', border: 'none', outline: 'none', color: '#f4f4f5', width: '100%' }}
+                              style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-main)', width: '100%' }}
                               value={story.soThat} 
                               onChange={(e) => handleUpdateStoryField(idx, 'soThat', e.target.value)}
                             />
@@ -970,7 +991,7 @@ export default function App() {
                               <span className="ac-keyword">&bull;</span>
                               <input 
                                 type="text"
-                                style={{ background: 'transparent', border: 'none', outline: 'none', color: '#a1a1aa', width: '100%', fontSize: '0.85rem' }}
+                                style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-muted)', width: '100%', fontSize: '0.85rem' }}
                                 value={ac} 
                                 onChange={(e) => handleUpdateStoryAC(idx, acIdx, e.target.value)}
                               />
@@ -988,7 +1009,7 @@ export default function App() {
                         <div className="story-actions">
                           <button 
                             className="btn-outline" 
-                            style={{ borderColor: 'rgba(239, 68, 68, 0.3)', color: '#fca5a5' }}
+                            style={{ borderColor: 'rgba(239, 68, 68, 0.3)', color: 'var(--text-danger)' }}
                             onClick={() => startAdversaryAudit(idx)}
                           >
                             <ShieldAlert size={16} />
@@ -1044,7 +1065,7 @@ export default function App() {
                                   {story.realistAudit.isCompatible ? (
                                     <span className="audit-success-msg" style={{ color: '#10b981', fontWeight: 600, fontSize: '0.85rem' }}>✓ Architecture Compatible</span>
                                   ) : (
-                                    <span className="audit-warning-msg" style={{ color: '#fca5a5', fontWeight: 600, fontSize: '0.85rem' }}>⚠ Architecture Conflict Detected</span>
+                                    <span className="audit-warning-msg" style={{ color: 'var(--text-danger)', fontWeight: 600, fontSize: '0.85rem' }}>⚠ Architecture Conflict Detected</span>
                                   )}
                                 </div>
                                 
@@ -1062,7 +1083,7 @@ export default function App() {
                                     {!story.overrideRealist && !story.realistAudit.isCompatible && (
                                       <button 
                                         className="btn-outline"
-                                        style={{ borderColor: 'rgba(245, 158, 11, 0.4)', color: '#fcd34d', alignSelf: 'flex-start', marginTop: '0.5rem', padding: '0.3rem 0.6rem', fontSize: '0.75rem' }}
+                                        style={{ borderColor: 'rgba(245, 158, 11, 0.4)', color: 'var(--text-warning)', alignSelf: 'flex-start', marginTop: '0.5rem', padding: '0.3rem 0.6rem', fontSize: '0.75rem' }}
                                         onClick={() => handleOverrideRealist(idx)}
                                       >
                                         Override Warning & Decompose anyway
@@ -1080,7 +1101,7 @@ export default function App() {
                             )}
 
                             {story.refinementError && (
-                              <div className="refinement-error-box" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#fca5a5', padding: '0.5rem', borderRadius: '6px', fontSize: '0.8rem', marginBottom: '0.75rem' }}>
+                              <div className="refinement-error-box" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', color: 'var(--text-danger)', padding: '0.5rem', borderRadius: '6px', fontSize: '0.8rem', marginBottom: '0.75rem' }}>
                                 ⚠ {story.refinementError}
                               </div>
                             )}
@@ -1088,7 +1109,7 @@ export default function App() {
                             {/* Interactive Checklist of Subtasks */}
                             {story.technicalTasks && story.technicalTasks.length > 0 && (
                               <div className="technical-tasks-checklist" style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '0.75rem' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '0.5rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
                                   <span className="tasks-title" style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-main)' }}>Developer Tasks & Test Specifications</span>
                                   <button 
                                     className="btn-outline"
@@ -1101,7 +1122,7 @@ export default function App() {
 
                                 <div className="tasks-list-container" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                   {story.technicalTasks.map((task, tIdx) => (
-                                    <div key={task.id || tIdx} className={`task-checkbox-item ${task.completed ? 'completed' : ''}`} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', paddingBottom: '0.75rem', opacity: task.completed ? 0.6 : 1 }}>
+                                    <div key={task.id || tIdx} className={`task-checkbox-item ${task.completed ? 'completed' : ''}`} style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', opacity: task.completed ? 0.6 : 1 }}>
                                       <div className="task-checkbox-row" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
                                         <input 
                                           type="checkbox" 
@@ -1114,7 +1135,7 @@ export default function App() {
                                           value={task.title}
                                           onChange={(e) => handleUpdateTaskField(idx, tIdx, 'title', e.target.value)}
                                           className="task-title-edit"
-                                          style={{ background: 'transparent', border: 'none', outline: 'none', color: '#f4f4f5', fontSize: '0.85rem', fontWeight: 600, width: '100%', borderBottom: '1px solid transparent', textDecoration: task.completed ? 'line-through' : 'none' }}
+                                          style={{ background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: 600, width: '100%', borderBottom: '1px solid transparent', textDecoration: task.completed ? 'line-through' : 'none' }}
                                           placeholder="Task title..."
                                         />
                                         <button 
@@ -1133,7 +1154,7 @@ export default function App() {
                                             type="text" 
                                             value={Array.isArray(task.filesAffected) ? task.filesAffected.join(', ') : task.filesAffected}
                                             onChange={(e) => handleUpdateTaskField(idx, tIdx, 'filesAffected', e.target.value.split(',').map(s => s.trim()))}
-                                            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-color)', borderRadius: '4px', fontSize: '0.75rem', color: '#d4d4d8', padding: '0.15rem 0.4rem', width: '100%', outline: 'none' }}
+                                            style={{ background: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: '4px', fontSize: '0.75rem', color: 'var(--text-main)', padding: '0.15rem 0.4rem', width: '100%', outline: 'none' }}
                                             placeholder="db/schema.ts, models/..."
                                           />
                                         </div>
@@ -1142,7 +1163,7 @@ export default function App() {
                                           <textarea 
                                             value={task.description}
                                             onChange={(e) => handleUpdateTaskField(idx, tIdx, 'description', e.target.value)}
-                                            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-color)', borderRadius: '4px', fontSize: '0.75rem', color: '#d4d4d8', padding: '0.25rem 0.4rem', width: '100%', minHeight: '40px', outline: 'none', fontFamily: 'inherit', resize: 'vertical' }}
+                                            style={{ background: 'var(--bg-input)', border: '1px solid var(--border-color)', borderRadius: '4px', fontSize: '0.75rem', color: 'var(--text-main)', padding: '0.25rem 0.4rem', width: '100%', minHeight: '40px', outline: 'none', fontFamily: 'inherit', resize: 'vertical' }}
                                             placeholder="Exact steps to build..."
                                           />
                                         </div>
@@ -1250,7 +1271,7 @@ export default function App() {
                     <span>Markdown Output Preview</span>
                   </div>
 
-                  <div className="spec-rendered-box" style={{ background: '#0e0e17' }}>
+                  <div className="spec-rendered-box" style={{ background: 'var(--bg-input)' }}>
                     <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: '0.85rem' }}>
                       {generateMarkdownBacklog()}
                     </pre>
@@ -1327,7 +1348,7 @@ export default function App() {
                             <div className="adversary-card-desc">{vuln.description}</div>
                             <div style={{ marginTop: '0.25rem' }}>
                               {vuln.acceptanceCriteria.map((ac, acIdx) => (
-                                <div key={acIdx} style={{ fontSize: '0.8rem', color: '#a1a1aa' }}>
+                                <div key={acIdx} style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                                   <span style={{ color: '#06b6d4', fontWeight: 'bold' }}>&bull;</span> {ac}
                                 </div>
                               ))}
