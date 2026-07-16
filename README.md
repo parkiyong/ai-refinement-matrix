@@ -7,20 +7,34 @@ A modern, high-performance web dashboard that orchestrates a specialized six-age
 📖 **[Read the User Guide](./USER_GUIDE.md)** to learn how to refine your backlog step-by-step.
 
 ```
-[ PO's Functional Slices ] 
-           │
-           ▼
-┌──────────────────────┐
-│  1. The Realist      │ ➔ Audits the PO's slices against actual Code Architecture.
-└──────────┬───────────┘
-           ▼
-┌──────────────────────┐
-│  2. The Decomposer   │ ➔ Shatters the approved slice into explicit Technical Tasks.
-└──────────┬───────────┘
-           ▼
-┌──────────────────────┐
-│  3. The Guardian     │ ➔ Builds the QA Automation & Testing Contract.
-└──────────────────────┘
+   [ Raw Feature Notes ]
+             │
+             ▼
+ ┌──────────────────────┐
+ │  1. The Excavator    │ ➔ Mines notes for functional & non-functional requirements.
+ └───────────┬──────────┘
+             ▼
+ ┌──────────────────────┐
+ │  2. The Slicer       │ ➔ Slices specifications into vertical user stories.
+ └───────────┬──────────┘
+             ▼
+ ┌──────────────────────┐
+ │  3. The Adversary    │ ➔ Audits stories for race conditions & security gaps.
+ └───────────┬──────────┘
+             │
+             ▼ (PO / Business Slices Approved)
+             │
+ ┌───────────▼──────────┐
+ │  4. The Realist      │ ➔ Audits slices against Lead Architect Design Doc.
+ └───────────┬──────────┘
+             ▼
+ ┌──────────────────────┐
+ │  5. The Decomposer   │ ➔ Shatters approved stories into developer subtasks.
+ └───────────┬──────────┘
+             ▼
+ ┌──────────────────────┐
+ │  6. The Guardian     │ ➔ Builds the QA Automation & Testing Contract.
+ └──────────────────────┘
 ```
 
 ---

@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Dynamic Prompt Loading**: Implemented reading and parsing agent system instructions directly from local markdown configuration files (`ai-refinement-plugin/agents/*.md`), stripping YAML frontmatter automatically.
 - **Claude Code CLI Integration**: Configured `claude` execution in non-interactive print mode with `--no-session-persistence` to prevent disk clutter, and `--tools ""` to ensure deterministic, safe text and JSON generation.
 - **Warning Filtering**: Added clean stderr parsing to suppress stdin detection warnings in the backend console logs.
-- **Documentation**: Updated README and CLI instructions to guide users on using the `claudecode` CLI instead of `agy`.
+- **Documentation**: Updated the main README flow diagram to show the complete 6-agent pipeline (both PO and Engineering loops), and updated guides/instructions to use the `claudecode` CLI instead of `agy`.
 
 ## [1.2.1] - 2026-07-16
 
