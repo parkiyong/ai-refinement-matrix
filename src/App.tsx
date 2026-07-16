@@ -164,7 +164,6 @@ export default function App() {
       const data = await response.json()
       if (response.ok) {
         setExcavatedSpec(data.result)
-        setStep(2) // Automatically transition to slicing step
       } else {
         setExcavateError(data.error || 'Excavation failed')
       }
@@ -205,6 +204,7 @@ export default function App() {
           } as Story
         })
         setStories(normalized)
+        setStep(2)
       } else if (response.status === 422 && data.rawResult) {
         setSliceError(`The Slicer Agent returned unparseable text. Click 'Retry' or edit raw specs.`)
         console.warn('Raw unparseable result:', data.rawResult)
@@ -692,7 +692,7 @@ export default function App() {
           </div>
 
           <div className="form-group">
-            <label className="form-label">Quick Templates</label>
+            <label className="form-label">Examples</label>
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
               {TEMPLATES.map((tmpl, idx) => (
                 <button 
@@ -1060,7 +1060,7 @@ export default function App() {
 
                             {/* Realist Audit Warnings / Success */}
                             {story.realistAudit && (
-                              <div className={`realist-audit-container ${story.realistAudit.isCompatible ? 'compatible' : 'incompatible'}`} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.75rem', marginBottom: '0.75rem' }}>
+                              <div className={`realist-audit-container ${story.realistAudit.isCompatible ? 'compatible' : 'incompatible'}`}>
                                 <div className="audit-summary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                                   {story.realistAudit.isCompatible ? (
                                     <span className="audit-success-msg" style={{ color: '#10b981', fontWeight: 600, fontSize: '0.85rem' }}>✓ Architecture Compatible</span>
@@ -1093,8 +1093,8 @@ export default function App() {
                                 )}
                                 
                                 {story.realistAudit.feedback && (
-                                  <p className="audit-feedback-text" style={{ fontSize: '0.8rem', color: '#d4d4d8', margin: '0.5rem 0 0 0', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.5rem' }}>
-                                    <strong style={{ color: '#06b6d4' }}>Realist Advice:</strong> {story.realistAudit.feedback}
+                                  <p className="audit-feedback-text" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '0.5rem 0 0 0', borderTop: '1px solid var(--border-color)', paddingTop: '0.5rem' }}>
+                                    <strong style={{ color: 'var(--text-highlight)' }}>Realist Advice:</strong> {story.realistAudit.feedback}
                                   </p>
                                 )}
                               </div>
@@ -1108,7 +1108,7 @@ export default function App() {
 
                             {/* Interactive Checklist of Subtasks */}
                             {story.technicalTasks && story.technicalTasks.length > 0 && (
-                              <div className="technical-tasks-checklist" style={{ background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', borderRadius: '10px', padding: '0.75rem' }}>
+                              <div className="technical-tasks-checklist">
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem' }}>
                                   <span className="tasks-title" style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-main)' }}>Developer Tasks & Test Specifications</span>
                                   <button 
@@ -1159,7 +1159,7 @@ export default function App() {
                                           />
                                         </div>
                                         <div className="detail-field" style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
-                                          <span className="detail-label" style={{ fontSize: '0.7rem', color: '#06b6d4', minWidth: '70px', fontWeight: 'bold', marginTop: '0.2rem' }}>Steps:</span>
+                                          <span className="detail-label" style={{ fontSize: '0.7rem', color: 'var(--text-highlight)', minWidth: '70px', fontWeight: 'bold', marginTop: '0.2rem' }}>Steps:</span>
                                           <textarea 
                                             value={task.description}
                                             onChange={(e) => handleUpdateTaskField(idx, tIdx, 'description', e.target.value)}
@@ -1169,41 +1169,41 @@ export default function App() {
                                         </div>
                                         
                                         {/* QA Testing Contracts */}
-                                        <div className="testing-contract-panel" style={{ background: 'rgba(0,0,0,0.15)', padding: '0.4rem 0.5rem', borderRadius: '6px', marginTop: '0.25rem', border: '1px solid rgba(255,255,255,0.02)' }}>
+                                        <div className="testing-contract-panel">
                                           <div className="testing-header" style={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#10b981', marginBottom: '0.25rem', textTransform: 'uppercase', letterSpacing: '0.03em' }}>QA Testing Contract</div>
                                           
                                           {task.unitTestContract !== undefined && (
                                             <div className="test-contract-item" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.2rem' }}>
-                                              <span className="test-badge unit" style={{ fontSize: '0.6rem', padding: '0.1rem 0.3rem', borderRadius: '3px', background: 'rgba(99, 102, 241, 0.15)', color: '#818cf8', fontWeight: 'bold', minWidth: '40px', textAlign: 'center' }}>Unit</span>
+                                              <span className="test-badge unit">Unit</span>
                                               <input 
                                                 type="text" 
                                                 value={task.unitTestContract}
                                                 onChange={(e) => handleUpdateTaskField(idx, tIdx, 'unitTestContract', e.target.value)}
-                                                style={{ background: 'transparent', border: 'none', outline: 'none', borderBottom: '1px solid transparent', color: 'var(--text-muted)', fontSize: '0.75rem', width: '100%' }}
+                                                style={{ background: 'transparent', border: 'none', outline: 'none', borderBottom: '1px solid transparent', color: 'var(--text-main)', fontSize: '0.75rem', width: '100%' }}
                                                 placeholder="Unit testing constraints..."
                                               />
                                             </div>
                                           )}
                                           {task.integrationTestContract !== undefined && (
                                             <div className="test-contract-item" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.2rem' }}>
-                                              <span className="test-badge integration" style={{ fontSize: '0.6rem', padding: '0.1rem 0.3rem', borderRadius: '3px', background: 'rgba(168, 85, 247, 0.15)', color: '#c084fc', fontWeight: 'bold', minWidth: '40px', textAlign: 'center' }}>Intg</span>
+                                              <span className="test-badge integration">Intg</span>
                                               <input 
                                                 type="text" 
                                                 value={task.integrationTestContract}
                                                 onChange={(e) => handleUpdateTaskField(idx, tIdx, 'integrationTestContract', e.target.value)}
-                                                style={{ background: 'transparent', border: 'none', outline: 'none', borderBottom: '1px solid transparent', color: 'var(--text-muted)', fontSize: '0.75rem', width: '100%' }}
+                                                style={{ background: 'transparent', border: 'none', outline: 'none', borderBottom: '1px solid transparent', color: 'var(--text-main)', fontSize: '0.75rem', width: '100%' }}
                                                 placeholder="Integration testing constraints..."
                                               />
                                             </div>
                                           )}
                                           {task.mockDataRequired !== undefined && (
                                             <div className="test-contract-item" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                                              <span className="test-badge mock" style={{ fontSize: '0.6rem', padding: '0.1rem 0.3rem', borderRadius: '3px', background: 'rgba(236, 72, 153, 0.15)', color: '#f472b6', fontWeight: 'bold', minWidth: '40px', textAlign: 'center' }}>Mock</span>
+                                              <span className="test-badge mock">Mock</span>
                                               <input 
                                                 type="text" 
                                                 value={task.mockDataRequired}
                                                 onChange={(e) => handleUpdateTaskField(idx, tIdx, 'mockDataRequired', e.target.value)}
-                                                style={{ background: 'transparent', border: 'none', outline: 'none', borderBottom: '1px solid transparent', color: 'var(--text-muted)', fontSize: '0.75rem', width: '100%' }}
+                                                style={{ background: 'transparent', border: 'none', outline: 'none', borderBottom: '1px solid transparent', color: 'var(--text-main)', fontSize: '0.75rem', width: '100%' }}
                                                 placeholder="Mock data specs..."
                                               />
                                             </div>

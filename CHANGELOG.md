@@ -5,6 +5,13 @@ All notable changes to the AI Refinement Matrix project will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-07-16
+
+### Fixed
+- **Excavator Spec Flow**: Prevented early auto-advancing to Step 2 upon successful excavation, allowing users to review synthesized specs first in Step 1.
+- **Light Theme Accessibility**: Replaced hardcoded dark background and text colors inside the Realist Advice and Developer Tasks sections with responsive theme variables, ensuring high contrast and clean readability in light mode.
+- **UI Renaming**: Renamed the "Quick Templates" header label and documentation references to "Examples" for better clarity.
+
 ## [1.2.0] - 2026-07-16
 
 ### Added

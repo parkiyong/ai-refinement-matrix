@@ -45,9 +45,9 @@ The dashboard features an adaptive theme toggle button in the top-right corner. 
 ### Step 1: Spec Excavation (Input Phase)
 This phase focuses on defining the exact scope of your feature to prevent "scope creep."
 
-1.  **Select a Template or Enter Notes**:
-    *   Click one of the **Quick Templates** (e.g., *User Filter Chips* or *Double Submit Protection*) to see an example, or paste your own messy notes into the **Raw Feature Notes** box.
-    *   *Tip:* Selecting a quick template automatically pre-loads both the PO feature spec *and* the corresponding Lead Architect Design Doc.
+1.  **Select an Example or Enter Notes**:
+    *   Click one of the **Examples** (e.g., *User Filter Chips* or *Double Submit Protection*) to see an example, or paste your own messy notes into the **Raw Feature Notes** box.
+    *   *Tip:* Selecting an example automatically pre-loads both the PO feature spec *and* the corresponding Lead Architect Design Doc.
 2.  **Run the Excavator**:
     *   Click the **Analyze Spec (Excavator)** button.
     *   The Excavator agent will output a structured document under **Step 1: Excavator Synthesis Output** detailing:

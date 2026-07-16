@@ -815,20 +815,97 @@ body {
 /* Realist Audit Styles */
 .realist-audit-container {
   margin-top: 0.75rem;
-  border-radius: 10px;
-  padding: 0.85rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  padding: 0.75rem;
   font-size: 0.85rem;
   transition: var(--transition-smooth);
 }
 
 .realist-audit-container.compatible {
-  background: rgba(16, 185, 129, 0.03);
-  border: 1px solid rgba(16, 185, 129, 0.15);
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .realist-audit-container.incompatible {
-  background: rgba(239, 68, 68, 0.03);
-  border: 1px solid rgba(239, 68, 68, 0.15);
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+[data-theme="light"] .realist-audit-container.compatible {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+[data-theme="light"] .realist-audit-container.incompatible {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+/* Technical Tasks Checklist */
+.technical-tasks-checklist {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 0.75rem;
+}
+
+[data-theme="light"] .technical-tasks-checklist {
+  background: rgba(15, 23, 42, 0.04);
+}
+
+/* Testing Contract Panel */
+.testing-contract-panel {
+  background: rgba(0, 0, 0, 0.15);
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  margin-top: 0.25rem;
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="light"] .testing-contract-panel {
+  background: rgba(15, 23, 42, 0.03);
+}
+
+/* QA Testing Contracts badges */
+.test-badge {
+  font-size: 0.6rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-weight: bold;
+  min-width: 40px;
+  text-align: center;
+  display: inline-block;
+}
+
+.test-badge.unit {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+}
+
+.test-badge.integration {
+  background: rgba(168, 85, 247, 0.15);
+  color: #d8b4fe;
+}
+
+.test-badge.mock {
+  background: rgba(236, 72, 153, 0.15);
+  color: #f9a8d4;
+}
+
+[data-theme="light"] .test-badge.unit {
+  background: rgba(99, 102, 241, 0.1);
+  color: #4f46e5;
+}
+
+[data-theme="light"] .test-badge.integration {
+  background: rgba(168, 85, 247, 0.1);
+  color: #9333ea;
+}
+
+[data-theme="light"] .test-badge.mock {
+  background: rgba(236, 72, 153, 0.1);
+  color: #db2777;
 }
 
 .violation-impact.blocker {
