@@ -74,20 +74,17 @@ Ensure you have the following installed on your system:
 
 ## 🏃 Getting Started
 
-### 1. Configure the Custom Agents
-To verify or create the Excavator, Slicer, Adversary, Realist, Decomposer, and Guardian agents on your local machine, make sure the custom markdown agent configurations exist in your global customizations folder.
+### 1. Custom Agent Definitions
+The dashboard automatically loads the system instructions for the six specialized agents from the local `./ai-refinement-plugin/agents/` directory:
+*   `excavator` (Spec-Driven Synthesis)
+*   `slicer` (Vertical Slicing)
+*   `adversary` (Edge-Case Audit)
+*   `realist` (Architecture Sanity Check)
+*   `decomposer` (Developer Subtask Decomposition)
+*   `guardian` (QA Testing & Mock Contract)
 
-A complete copy of the custom agents is included in this repository under the `./ai-refinement-plugin` directory. You can easily copy it to your global configurations directory to enable discovery:
+No global plugin configuration or copying is required to run the dashboard.
 
-*   **Global Plugin Path**: Copy the `ai-refinement-plugin` directory to:
-    `~/.gemini/config/plugins/ai-refinement-plugin/`
-*   This will register all six agents:
-    *   `excavator` (Spec-Driven Synthesis)
-    *   `slicer` (Vertical Slicing)
-    *   `adversary` (Edge-Case Audit)
-    *   `realist` (Architecture Sanity Check)
-    *   `decomposer` (Developer Subtask Decomposition)
-    *   `guardian` (QA Testing & Mock Contract)
 
 ### 2. Setup the Workspace
 Navigate to this directory and install Node dependencies:
