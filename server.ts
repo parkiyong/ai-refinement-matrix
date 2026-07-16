@@ -6,6 +6,7 @@ import { execFile } from 'child_process'
 import { promisify } from 'util'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import fs from 'fs/promises'
 
 const execFileAsync = promisify(execFile)
 const app = new Hono()
@@ -85,27 +86,52 @@ interface GuardianTestContract {
   mockDataRequired: string
 }
 
-// Helper to run agy CLI command safely using spawn/execFile (no shell injection risk)
-async function runAgyAgent(agentName: string, prompt: string): Promise<string> {
-  console.log(`[Backend] Invoking agy with agent: ${agentName}...`)
+// Helper to load the agent's system prompt from the local markdown file
+async function getAgentSystemPrompt(agentName: string): Promise<string> {
+  const filePath = path.join(__dirname, 'ai-refinement-plugin', 'agents', `${agentName}.md`)
+  try {
+    const content = await fs.readFile(filePath, 'utf-8')
+    const parts = content.split('---')
+    if (parts.length >= 3) {
+      return parts.slice(2).join('---').trim()
+    }
+    return content.trim()
+  } catch (err) {
+    console.error(`[Backend] Error reading agent prompt for ${agentName}:`, err)
+    throw new Error(`Failed to load system prompt for agent ${agentName}`)
+  }
+}
+
+// Helper to run claude CLI command safely using spawn/execFile (no shell injection risk)
+async function runClaudeAgent(agentName: string, prompt: string): Promise<string> {
+  console.log(`[Backend] Invoking claude with agent: ${agentName}...`)
   
   try {
-    const { stdout, stderr } = await execFileAsync('agy', [
-      '--agent', agentName,
-      '--dangerously-skip-permissions',
-      '--print', prompt
+    const systemPrompt = await getAgentSystemPrompt(agentName)
+    const { stdout, stderr } = await execFileAsync('claude', [
+      '--no-session-persistence',
+      '--tools', '',
+      '--system-prompt', systemPrompt,
+      '-p', prompt
     ], {
       timeout: 120000, // 2-minute timeout
       maxBuffer: 10 * 1024 * 1024 // 10MB buffer
     })
     
     if (stderr && stderr.trim().length > 0) {
-      console.warn(`[Backend] agy stderr: ${stderr}`)
+      const cleanStderr = stderr
+        .split('\n')
+        .filter(line => !line.includes('no stdin data received') && !line.includes('redirect stdin explicitly'))
+        .join('\n')
+        .trim()
+      if (cleanStderr.length > 0) {
+        console.warn(`[Backend] claude stderr: ${cleanStderr}`)
+      }
     }
     
     return stdout
   } catch (error: any) {
-    console.error(`[Backend] Error running agy:`, error)
+    console.error(`[Backend] Error running claude:`, error)
     throw new Error(error.stdout || error.message || 'CLI execution failed')
   }
 }
@@ -118,7 +144,7 @@ app.post('/api/excavate', async (c) => {
       return c.json({ error: 'Raw notes are required' }, 400)
     }
     
-    const output = await runAgyAgent('excavator', notes)
+    const output = await runClaudeAgent('excavator', notes)
     return c.json({ result: output })
   } catch (err: any) {
     return c.json({ error: err.message || 'An error occurred during excavation' }, 500)
@@ -132,7 +158,7 @@ app.post('/api/slice', async (c) => {
       return c.json({ error: 'Specification is required' }, 400)
     }
     
-    const output = await runAgyAgent('slicer', spec)
+    const output = await runClaudeAgent('slicer', spec)
     
     let stories: Story[] = []
     try {
@@ -172,7 +198,7 @@ ${(story.acceptanceCriteria || []).map(ac => `- ${ac}`).join('\n')}
 
 Identify 5 obscure edge cases/vulnerabilities and output them as a JSON array.`
     
-    const output = await runAgyAgent('adversary', prompt)
+    const output = await runClaudeAgent('adversary', prompt)
     
     let edgeCases: EdgeCase[] = []
     try {
@@ -215,7 +241,7 @@ ${designDoc}
 
 Verify architectural compatibility and output a JSON object.`
 
-    const output = await runAgyAgent('realist', prompt)
+    const output = await runClaudeAgent('realist', prompt)
 
     let result: RealistResult = { isCompatible: true, violations: [], feedback: '' }
     try {
@@ -258,7 +284,7 @@ ${designDoc}
 
 Decompose this user story into explicit developer subtasks and output a JSON array of task objects.`
 
-    const output = await runAgyAgent('decomposer', prompt)
+    const output = await runClaudeAgent('decomposer', prompt)
 
     let tasks: DecomposedTask[] = []
     try {
@@ -301,7 +327,7 @@ ${JSON.stringify(tasks, null, 2)}
 
 Define the exact testing contract for each task and output a JSON array of test contracts matching the task IDs.`
 
-    const output = await runAgyAgent('guardian', prompt)
+    const output = await runClaudeAgent('guardian', prompt)
 
     let testContracts: GuardianTestContract[] = []
     try {

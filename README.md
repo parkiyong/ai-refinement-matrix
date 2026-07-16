@@ -46,7 +46,7 @@ A modern, high-performance web dashboard that orchestrates a specialized six-age
 *   **Language**: TypeScript (Type safety enforced across client & server)
 *   **Frontend**: React (TypeScript, Vite, Lucide Icons, Vanilla CSS Design System)
 *   **Backend API**: Hono running on Node.js using `tsx` (TypeScript Execution)
-*   **Orchestration Engine**: Runs the Antigravity TUI/CLI (`agy`) via secure child processes (`execFile`) using local custom agents.
+*   **Orchestration Engine**: Runs the Claude Code CLI (`claude`) via secure child processes (`execFile`) using local custom agents.
 
 ---
 
@@ -54,7 +54,7 @@ A modern, high-performance web dashboard that orchestrates a specialized six-age
 
 Ensure you have the following installed on your system:
 *   [Node.js](https://nodejs.org/) (v18+)
-*   **Antigravity CLI** (`agy`) configured and authenticated.
+*   **Claude Code CLI** (`claude`) configured and authenticated.
 
 ---
 
@@ -103,24 +103,24 @@ Open your browser and navigate to **[http://localhost:3000](http://localhost:300
 
 ## 🖥️ Terminal (CLI) Direct Commands
 
-Since the agent configurations are installed as global customizations, you can also run them directly from any terminal prompt:
+Since the agent configurations are installed as markdown files in this repository, you can also run them directly from any terminal prompt using the `claude` CLI:
 
 ```bash
-# Run the Excavator
-agy --agent excavator --print "As a user, I want a dark mode switch on my dashboard."
+# Run the Excavator (example on macOS/Linux using cat)
+claude --system-prompt "$(cat ./ai-refinement-plugin/agents/excavator.md)" -p "As a user, I want a dark mode switch on my dashboard."
 
 # Run the Slicer
-agy --agent slicer --print "Spec: [paste spec here]"
+claude --system-prompt "$(cat ./ai-refinement-plugin/agents/slicer.md)" -p "Spec: [paste spec here]"
 
 # Run the Adversary
-agy --agent adversary --print "Story: [paste story details here]"
+claude --system-prompt "$(cat ./ai-refinement-plugin/agents/adversary.md)" -p "Story: [paste story details here]"
 
 # Run the Realist
-agy --agent realist --print "Story: [story text] Design Doc: [design doc text]"
+claude --system-prompt "$(cat ./ai-refinement-plugin/agents/realist.md)" -p "Story: [story text] Design Doc: [design doc text]"
 
 # Run the Decomposer
-agy --agent decomposer --print "Story: [story text] Design Doc: [design doc text]"
+claude --system-prompt "$(cat ./ai-refinement-plugin/agents/decomposer.md)" -p "Story: [story text] Design Doc: [design doc text]"
 
 # Run the Guardian
-agy --agent guardian --print "Story: [story text] Tasks: [tasks JSON]"
+claude --system-prompt "$(cat ./ai-refinement-plugin/agents/guardian.md)" -p "Story: [story text] Tasks: [tasks JSON]"
 ```

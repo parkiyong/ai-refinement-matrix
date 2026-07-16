@@ -5,6 +5,15 @@ All notable changes to the AI Refinement Matrix project will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-07-17
+
+### Changed
+- **Orchestration Engine Migration**: Migrated the agent runner backend from `agy` (Antigravity CLI) to the `claudecode` CLI (`claude`).
+- **Dynamic Prompt Loading**: Implemented reading and parsing agent system instructions directly from local markdown configuration files (`ai-refinement-plugin/agents/*.md`), stripping YAML frontmatter automatically.
+- **Claude Code CLI Integration**: Configured `claude` execution in non-interactive print mode with `--no-session-persistence` to prevent disk clutter, and `--tools ""` to ensure deterministic, safe text and JSON generation.
+- **Warning Filtering**: Added clean stderr parsing to suppress stdin detection warnings in the backend console logs.
+- **Documentation**: Updated README and CLI instructions to guide users on using the `claudecode` CLI instead of `agy`.
+
 ## [1.2.1] - 2026-07-16
 
 ### Fixed
