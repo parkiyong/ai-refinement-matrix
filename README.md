@@ -1,28 +1,26 @@
 # AI Refinement Matrix Dashboard
 
-A modern, high-performance web dashboard that orchestrates a specialized three-agent team to automate backlog refinement and vertical user story slicing using the **SPIDR framework** and cynical safety audits.
+A modern, high-performance web dashboard that orchestrates a specialized six-agent team to automate backlog refinement, vertical user story slicing, architectural validation, developer subtask decomposition, and QA test contracting.
 
 ![AI Refinement Matrix Interface](./assets/screenshot.png)
 
 📖 **[Read the User Guide](./USER_GUIDE.md)** to learn how to refine your backlog step-by-step.
 
 ```
-  [ Raw Feature / Idea ]
-            │
-            ▼
-  ┌───────────────────┐
-  │ 1. The Excavator  │  (Extracts explicit & implicit specs)
-  └─────────┬─────────┘
-            │
-            ▼
-  ┌───────────────────┐
-  │ 2. The Slicer     │  (Cuts horizontal blocks into vertical user stories)
-  └─────────┬─────────┘
-            │
-            ▼
-  ┌───────────────────┐
-  │ 3. The Adversary  │  (Stress-tests edge cases & non-functional limits)
-  └───────────────────┘
+[ PO's Functional Slices ] 
+           │
+           ▼
+┌──────────────────────┐
+│  1. The Realist      │ ➔ Audits the PO's slices against actual Code Architecture.
+└──────────┬───────────┘
+           ▼
+┌──────────────────────┐
+│  2. The Decomposer   │ ➔ Shatters the approved slice into explicit Technical Tasks.
+└──────────┬───────────┘
+           ▼
+┌──────────────────────┐
+│  3. The Guardian     │ ➔ Builds the QA Automation & Testing Contract.
+└──────────────────────┘
 ```
 
 ---
@@ -30,10 +28,15 @@ A modern, high-performance web dashboard that orchestrates a specialized three-a
 ## 🚀 Features
 
 *   **Step 1: Spec Excavator**: Mines messy feature ideas and outputs structured Markdown documentation separating core functional workflows from non-functional parameters and identifying missing requirements.
-*   **Step 2: Story Slicer**: Automatically splits synthesized specifications into independent, vertically-sliced user stories using the SPIDR framework, complete with Given-When-Then Acceptance Criteria.
-*   **Step 3: Stress Audit**: Runs a cynical Adversary agent on selected user stories to identify hidden race conditions, UI locks, security vulnerabilities, or network issues, allowing you to merge the safeguards straight into the story cards.
-*   **Release Center**: Exports the final refined backlog to a clean Markdown format or copies it straight to your clipboard for Jira/Linear.
-*   **UI/UX Aesthetics**: Premium dark theme with vibrant neon gradients, glassmorphism card controls, real-time loading skeletons, and interactive state transitions.
+*   **Step 2: Story Slicer & Stress Audit**: 
+    *   Automatically splits specs into independent, vertically-sliced user stories using the SPIDR framework.
+    *   Runs the cynical **Adversary** agent to flag race conditions, security vulnerabilities, or network issues, allowing you to merge acceptance criteria straight into cards.
+*   **Step 2 (Engineering Mode): Technical Refinement Loop**:
+    *   **The Realist**: Checks user stories against a shared **Lead Architect Design Doc** to flag compatibility warnings and architectural violations.
+    *   **The Decomposer**: Shatters stories into explicit developer subtasks, listing files affected and action steps.
+    *   **The Guardian**: Automates the QA contract, detailing Unit, Integration, and Mock Data expectations for each subtask.
+    *   **Interactive Checklist**: Edit task details, files, and contracts inline, add manual tasks, or check them off as completed.
+*   **Release Center**: Exports the final refined backlog (with developer tasks and test contracts) to Markdown or copy to clipboard for Jira/Linear.
 
 ---
 
@@ -57,16 +60,19 @@ Ensure you have the following installed on your system:
 ## 🏃 Getting Started
 
 ### 1. Configure the Custom Agents
-To verify or create the Excavator, Slicer, and Adversary agents on your local machine, make sure the custom markdown agent configurations exist in your global customizations folder.
+To verify or create the Excavator, Slicer, Adversary, Realist, Decomposer, and Guardian agents on your local machine, make sure the custom markdown agent configurations exist in your global customizations folder.
 
 A complete copy of the custom agents is included in this repository under the `./ai-refinement-plugin` directory. You can easily copy it to your global configurations directory to enable discovery:
 
 *   **Global Plugin Path**: Copy the `ai-refinement-plugin` directory to:
     `~/.gemini/config/plugins/ai-refinement-plugin/`
-*   This will register the three agents:
+*   This will register all six agents:
     *   `excavator` (Spec-Driven Synthesis)
     *   `slicer` (Vertical Slicing)
     *   `adversary` (Edge-Case Audit)
+    *   `realist` (Architecture Sanity Check)
+    *   `decomposer` (Developer Subtask Decomposition)
+    *   `guardian` (QA Testing & Mock Contract)
 
 ### 2. Setup the Workspace
 Navigate to this directory and install Node dependencies:
@@ -107,4 +113,13 @@ agy --agent slicer --print "Spec: [paste spec here]"
 
 # Run the Adversary
 agy --agent adversary --print "Story: [paste story details here]"
+
+# Run the Realist
+agy --agent realist --print "Story: [story text] Design Doc: [design doc text]"
+
+# Run the Decomposer
+agy --agent decomposer --print "Story: [story text] Design Doc: [design doc text]"
+
+# Run the Guardian
+agy --agent guardian --print "Story: [story text] Tasks: [tasks JSON]"
 ```

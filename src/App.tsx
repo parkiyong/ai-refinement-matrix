@@ -61,6 +61,7 @@ interface Vulnerability {
 interface Template {
   name: string
   text: string
+  designDoc?: string
 }
 
 // Templates to help POs get started
@@ -71,7 +72,13 @@ const TEMPLATES: Template[] = [
 Stakeholders want it to look like modern chip filters (pill-shaped, outline/filled states).
 It needs to support single-select and multi-select modes.
 Filters should update the URL search query parameters dynamically so users can bookmark filtered views.
-It must handle long category text gracefully (truncation) and be keyboard accessible.`
+It must handle long category text gracefully (truncation) and be keyboard accessible.`,
+    designDoc: `## Reusable UI Component & State Architecture
+
+- **Framework & Styles**: React with Tailwind/Vanilla CSS Variables. Custom components must live in \`src/components/ui/\`.
+- **Filter State Management**: Must synchronize with URL search parameters (e.g. \`?tags=react,typescript\`) using native \`URLSearchParams\` to ensure deep linking and bookmarking.
+- **Accessibility (A11y)**: Must meet WAI-ARIA standards for filter chips: \`role="checkbox"\`, \`aria-checked\`, support \`Space\`/\`Enter\` key presses.
+- **Performance**: Chip lists with dynamic filter updates must avoid full page re-renders. Component must be pure and memoized if rendering list size exceeds 100 items.`
   },
   {
     name: "Double Submit Protection",
@@ -80,7 +87,13 @@ We are seeing duplicate charge records in DB.
 Frontend needs to disable the checkout submit button instantly upon click.
 Show a loading spinner.
 Handle cases where the checkout fails and let the user submit again.
-We must support slow 3G connections (sometimes requests take up to 30s).`
+We must support slow 3G connections (sometimes requests take up to 30s).`,
+    designDoc: `## API Idempotency & Transaction Safety Gate
+
+- **Client-Side Submits**: Forms must disable button and display a loading indicator immediately on click. Action locks state to prevent concurrent clicks.
+- **API Protocol**: Every write transaction (e.g., charge, purchase) must generate and attach a unique UUID v4 client-side as an \`X-Idempotency-Key\` header.
+- **Server Layer**: Backend (Hono) must validate the \`X-Idempotency-Key\` using Redis cache with a 120-second TTL. Duplicate requests within TTL must yield cached responses (200 OK) without re-executing transactions.
+- **Database Constraints**: DB schema must have a \`unique_idempotency_key\` constraint on payments table as a fallback safety measure.`
   }
 ]
 
@@ -665,7 +678,12 @@ export default function App() {
                   key={idx}
                   className="btn-outline" 
                   style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem' }}
-                  onClick={() => setRawNotes(tmpl.text)}
+                  onClick={() => {
+                    setRawNotes(tmpl.text)
+                    if (tmpl.designDoc) {
+                      setDesignDoc(tmpl.designDoc)
+                    }
+                  }}
                 >
                   {tmpl.name}
                 </button>
@@ -859,6 +877,20 @@ export default function App() {
                         </div>
                         <span className="badge-architect" style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem', background: 'rgba(6, 182, 212, 0.1)', color: '#06b6d4', borderRadius: '4px', border: '1px solid rgba(6, 182, 212, 0.2)' }}>Architect Role Active</span>
                       </div>
+                      
+                      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+                        {TEMPLATES.map((tmpl, tmplIdx) => tmpl.designDoc && (
+                          <button
+                            key={tmplIdx}
+                            className="btn-outline"
+                            style={{ fontSize: '0.75rem', padding: '0.25rem 0.6rem', borderRadius: '4px' }}
+                            onClick={() => setDesignDoc(tmpl.designDoc || '')}
+                          >
+                            Use {tmpl.name} Doc
+                          </button>
+                        ))}
+                      </div>
+
                       <textarea
                         className="textarea-input"
                         style={{ minHeight: '120px', fontSize: '0.85rem', fontFamily: 'monospace', width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-color)', color: 'var(--text-main)', borderRadius: '8px', padding: '0.75rem', outline: 'none' }}
