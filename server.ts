@@ -44,6 +44,47 @@ interface EdgeCase {
   acceptanceCriteria: string[]
 }
 
+interface RealistRequest {
+  story: Story
+  designDoc: string
+}
+
+interface RealistViolation {
+  title: string
+  description: string
+  impact: string
+}
+
+interface RealistResult {
+  isCompatible: boolean
+  violations: RealistViolation[]
+  feedback: string
+}
+
+interface DecomposeRequest {
+  story: Story
+  designDoc: string
+}
+
+interface DecomposedTask {
+  id: string
+  title: string
+  description: string
+  filesAffected: string[]
+}
+
+interface GuardianRequest {
+  story: Story
+  tasks: DecomposedTask[]
+}
+
+interface GuardianTestContract {
+  id: string
+  unitTestContract: string
+  integrationTestContract: string
+  mockDataRequired: string
+}
+
 // Helper to run agy CLI command safely using spawn/execFile (no shell injection risk)
 async function runAgyAgent(agentName: string, prompt: string): Promise<string> {
   console.log(`[Backend] Invoking agy with agent: ${agentName}...`)
@@ -153,6 +194,136 @@ Identify 5 obscure edge cases/vulnerabilities and output them as a JSON array.`
     return c.json({ error: err.message || 'An error occurred during adversary audit' }, 500)
   }
 })
+
+app.post('/api/realist', async (c) => {
+  try {
+    const { story, designDoc } = await c.req.json<RealistRequest>()
+    if (!story || !designDoc) {
+      return c.json({ error: 'Story and Design Document are required' }, 400)
+    }
+
+    const prompt = `Review this user story:
+Title: ${story.title}
+As a: ${story.asA}
+I want to: ${story.iWantTo}
+So that: ${story.soThat}
+Acceptance Criteria:
+${(story.acceptanceCriteria || []).map(ac => `- ${ac}`).join('\n')}
+
+Lead Architect Design Doc:
+${designDoc}
+
+Verify architectural compatibility and output a JSON object.`
+
+    const output = await runAgyAgent('realist', prompt)
+
+    let result: RealistResult = { isCompatible: true, violations: [], feedback: '' }
+    try {
+      const jsonStart = output.indexOf('{')
+      const jsonEnd = output.lastIndexOf('}') + 1
+      if (jsonStart !== -1 && jsonEnd !== -1) {
+        const jsonStr = output.substring(jsonStart, jsonEnd)
+        result = JSON.parse(jsonStr) as RealistResult
+      } else {
+        throw new Error('JSON boundaries not found')
+      }
+    } catch (parseErr) {
+      console.warn('[Backend] Failed to parse realist JSON directly.', parseErr)
+      return c.json({ error: 'Failed to parse realist audit as JSON.', rawResult: output }, 422)
+    }
+
+    return c.json(result)
+  } catch (err: any) {
+    return c.json({ error: err.message || 'An error occurred during realist audit' }, 500)
+  }
+})
+
+app.post('/api/decompose', async (c) => {
+  try {
+    const { story, designDoc } = await c.req.json<DecomposeRequest>()
+    if (!story || !designDoc) {
+      return c.json({ error: 'Story and Design Document are required' }, 400)
+    }
+
+    const prompt = `Review this user story:
+Title: ${story.title}
+As a: ${story.asA}
+I want to: ${story.iWantTo}
+So that: ${story.soThat}
+Acceptance Criteria:
+${(story.acceptanceCriteria || []).map(ac => `- ${ac}`).join('\n')}
+
+Lead Architect Design Doc:
+${designDoc}
+
+Decompose this user story into explicit developer subtasks and output a JSON array of task objects.`
+
+    const output = await runAgyAgent('decomposer', prompt)
+
+    let tasks: DecomposedTask[] = []
+    try {
+      const jsonStart = output.indexOf('[')
+      const jsonEnd = output.lastIndexOf(']') + 1
+      if (jsonStart !== -1 && jsonEnd !== -1) {
+        const jsonStr = output.substring(jsonStart, jsonEnd)
+        tasks = JSON.parse(jsonStr) as DecomposedTask[]
+      } else {
+        throw new Error('JSON boundaries not found')
+      }
+    } catch (parseErr) {
+      console.warn('[Backend] Failed to parse decomposer JSON directly.', parseErr)
+      return c.json({ error: 'Failed to parse subtasks as JSON.', rawResult: output }, 422)
+    }
+
+    return c.json({ tasks })
+  } catch (err: any) {
+    return c.json({ error: err.message || 'An error occurred during task decomposition' }, 500)
+  }
+})
+
+app.post('/api/guardian', async (c) => {
+  try {
+    const { story, tasks } = await c.req.json<GuardianRequest>()
+    if (!story || !tasks) {
+      return c.json({ error: 'Story and decomposed tasks are required' }, 400)
+    }
+
+    const prompt = `Review this user story:
+Title: ${story.title}
+As a: ${story.asA}
+I want to: ${story.iWantTo}
+So that: ${story.soThat}
+Acceptance Criteria:
+${(story.acceptanceCriteria || []).map(ac => `- ${ac}`).join('\n')}
+
+Decomposed Tasks:
+${JSON.stringify(tasks, null, 2)}
+
+Define the exact testing contract for each task and output a JSON array of test contracts matching the task IDs.`
+
+    const output = await runAgyAgent('guardian', prompt)
+
+    let testContracts: GuardianTestContract[] = []
+    try {
+      const jsonStart = output.indexOf('[')
+      const jsonEnd = output.lastIndexOf(']') + 1
+      if (jsonStart !== -1 && jsonEnd !== -1) {
+        const jsonStr = output.substring(jsonStart, jsonEnd)
+        testContracts = JSON.parse(jsonStr) as GuardianTestContract[]
+      } else {
+        throw new Error('JSON boundaries not found')
+      }
+    } catch (parseErr) {
+      console.warn('[Backend] Failed to parse guardian JSON directly.', parseErr)
+      return c.json({ error: 'Failed to parse testing contract as JSON.', rawResult: output }, 422)
+    }
+
+    return c.json({ testContracts })
+  } catch (err: any) {
+    return c.json({ error: err.message || 'An error occurred during guardian test contract generation' }, 500)
+  }
+})
+
 
 // Serve React Frontend Static Assets in Production
 if (process.env.NODE_ENV === 'production') {

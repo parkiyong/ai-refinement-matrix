@@ -718,3 +718,145 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
 }
+
+/* ==========================================================================
+   Engineering Refinement Loop Styling
+   ========================================================================== */
+
+/* Switch Toggle Component */
+.switch-toggle {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  margin: 0;
+}
+
+.switch-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.08);
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+}
+
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 3px;
+  bottom: 3px;
+  background-color: var(--text-muted);
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 50%;
+}
+
+.switch-checkbox:checked + .switch-slider {
+  background: var(--primary-gradient);
+  border-color: transparent;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+}
+
+.switch-checkbox:checked + .switch-slider:before {
+  transform: translateX(16px);
+  background-color: #ffffff;
+}
+
+/* Design Doc Input Panel */
+.design-doc-panel {
+  transition: var(--transition-smooth);
+}
+
+.design-doc-panel textarea:focus {
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-neon);
+}
+
+/* Realist Audit Styles */
+.realist-audit-container {
+  margin-top: 0.75rem;
+  border-radius: 10px;
+  padding: 0.85rem;
+  font-size: 0.85rem;
+  transition: var(--transition-smooth);
+}
+
+.realist-audit-container.compatible {
+  background: rgba(16, 185, 129, 0.03);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+}
+
+.realist-audit-container.incompatible {
+  background: rgba(239, 68, 68, 0.03);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.violation-impact.blocker {
+  color: #ef4444;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.3);
+}
+
+.violation-impact.high {
+  color: #f59e0b;
+}
+
+.violation-impact.warning {
+  color: #3b82f6;
+}
+
+/* Technical Tasks Checklist */
+.task-checkbox-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem;
+  transition: var(--transition-smooth);
+}
+
+.task-checkbox-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.task-checkbox-item.completed {
+  border-color: rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.01);
+}
+
+.task-title-edit:focus {
+  border-bottom-color: rgba(168, 85, 247, 0.5) !important;
+}
+
+.detail-input:focus,
+.detail-textarea:focus {
+  border-color: rgba(168, 85, 247, 0.4) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.test-contract-input {
+  transition: var(--transition-smooth);
+}
+
+.test-contract-input:focus {
+  border-bottom: 1px solid rgba(16, 185, 129, 0.4) !important;
+}
+
+/* Spinner Animation Keyframe */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+

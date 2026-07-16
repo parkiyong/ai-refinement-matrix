@@ -4,6 +4,8 @@ A modern, high-performance web dashboard that orchestrates a specialized three-a
 
 ![AI Refinement Matrix Interface](./assets/screenshot.png)
 
+📖 **[Read the User Guide](./USER_GUIDE.md)** to learn how to refine your backlog step-by-step.
+
 ```
   [ Raw Feature / Idea ]
             │
