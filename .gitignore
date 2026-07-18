@@ -42,8 +42,9 @@ Thumbs.db
 .temp/
 tmp/
 
-# Claude Flow & Swarm Directories
-.claude-flow/
+# Claude Code - ignore local/ephemeral, keep settings + custom agents/skills
+.claude/settings.local.json
+.claude/worktrees/
+.claude/scheduled_tasks.json
+.claude/todos/
 .mcp.json
-.okf/
-.swarm/
