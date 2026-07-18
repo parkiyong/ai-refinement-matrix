@@ -41,3 +41,9 @@ Thumbs.db
 .serverless/
 .temp/
 tmp/
+
+# Claude Flow & Swarm Directories
+.claude-flow/
+.mcp.json
+.okf/
+.swarm/
